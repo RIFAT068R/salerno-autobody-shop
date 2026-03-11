@@ -1,0 +1,888 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Salerno Auto Body Shop — Live Preview</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Bebas+Neue&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --black: #0a0a0a;
+      --dark: #111111;
+      --dark-2: #1a1a1a;
+      --dark-3: #222222;
+      --red: #c0392b;
+      --red-light: #e74c3c;
+      --silver: #b0b8c1;
+      --white: #ffffff;
+      --panel-width: 320px;
+    }
+
+    html, body {
+      height: 100%;
+      overflow: hidden;
+      font-family: 'Inter', sans-serif;
+      background: var(--black);
+      color: var(--white);
+    }
+
+    /* ===== LAYOUT ===== */
+    .app {
+      display: flex;
+      height: 100vh;
+      width: 100vw;
+      overflow: hidden;
+    }
+
+    /* ===== LEFT SIDEBAR PANEL ===== */
+    .sidebar {
+      width: var(--panel-width);
+      min-width: var(--panel-width);
+      background: var(--dark);
+      border-right: 1px solid rgba(255,255,255,0.08);
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+      overflow-x: hidden;
+      z-index: 10;
+      scrollbar-width: thin;
+      scrollbar-color: var(--red) var(--dark);
+    }
+
+    .sidebar::-webkit-scrollbar { width: 4px; }
+    .sidebar::-webkit-scrollbar-track { background: var(--dark); }
+    .sidebar::-webkit-scrollbar-thumb { background: var(--red); border-radius: 2px; }
+
+    /* Sidebar Header */
+    .sidebar-header {
+      padding: 20px 20px 16px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      background: var(--dark-2);
+      flex-shrink: 0;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .brand-icon {
+      width: 36px;
+      height: 36px;
+      background: var(--red);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      color: var(--white);
+      flex-shrink: 0;
+      box-shadow: 0 4px 12px rgba(192,57,43,0.4);
+    }
+
+    .brand-text { display: flex; flex-direction: column; line-height: 1.1; }
+    .brand-name {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.1rem;
+      letter-spacing: 0.08em;
+      color: var(--white);
+    }
+    .brand-sub {
+      font-size: 0.6rem;
+      letter-spacing: 0.18em;
+      color: var(--silver);
+      text-transform: uppercase;
+    }
+
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(39,174,96,0.15);
+      border: 1px solid rgba(39,174,96,0.3);
+      color: #2ecc71;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+    }
+
+    .status-dot {
+      width: 6px;
+      height: 6px;
+      background: #2ecc71;
+      border-radius: 50%;
+      animation: blink 1.5s ease-in-out infinite;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+
+    /* Sidebar Nav */
+    .sidebar-nav {
+      padding: 16px 12px;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      flex-shrink: 0;
+    }
+
+    .nav-label {
+      font-size: 0.62rem;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.35);
+      padding: 0 8px;
+      margin-bottom: 8px;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 10px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-size: 0.82rem;
+      font-weight: 500;
+      color: rgba(255,255,255,0.6);
+      border: 1px solid transparent;
+      text-decoration: none;
+    }
+
+    .nav-item i {
+      width: 16px;
+      text-align: center;
+      font-size: 0.8rem;
+      color: rgba(255,255,255,0.4);
+      transition: all 0.2s;
+    }
+
+    .nav-item:hover {
+      background: rgba(255,255,255,0.06);
+      color: var(--white);
+    }
+
+    .nav-item:hover i { color: var(--red-light); }
+
+    .nav-item.active {
+      background: rgba(192,57,43,0.15);
+      border-color: rgba(192,57,43,0.3);
+      color: var(--white);
+    }
+
+    .nav-item.active i { color: var(--red-light); }
+
+    /* Info Cards */
+    .sidebar-info {
+      padding: 14px 16px;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      flex-shrink: 0;
+    }
+
+    .info-card {
+      background: var(--dark-2);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 10px;
+      padding: 14px;
+      margin-bottom: 10px;
+    }
+
+    .info-card:last-child { margin-bottom: 0; }
+
+    .info-card-title {
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.35);
+      margin-bottom: 10px;
+    }
+
+    .info-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      margin-bottom: 8px;
+      font-size: 0.78rem;
+    }
+
+    .info-row:last-child { margin-bottom: 0; }
+
+    .info-row i {
+      color: var(--red-light);
+      font-size: 0.75rem;
+      width: 14px;
+      margin-top: 1px;
+      flex-shrink: 0;
+    }
+
+    .info-row span { color: rgba(255,255,255,0.7); line-height: 1.4; }
+    .info-row a { color: rgba(255,255,255,0.7); text-decoration: none; }
+    .info-row a:hover { color: var(--red-light); }
+
+    /* Rating */
+    .rating-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 8px;
+    }
+
+    .stars { color: #f39c12; font-size: 0.7rem; }
+    .rating-text { font-size: 0.72rem; color: rgba(255,255,255,0.5); }
+
+    /* CTA Buttons */
+    .sidebar-ctas {
+      padding: 14px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      flex-shrink: 0;
+    }
+
+    .cta-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 10px 16px;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-decoration: none;
+      border: none;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .cta-primary {
+      background: var(--red);
+      color: var(--white);
+      box-shadow: 0 4px 16px rgba(192,57,43,0.35);
+    }
+
+    .cta-primary:hover {
+      background: var(--red-light);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(192,57,43,0.5);
+    }
+
+    .cta-outline {
+      background: transparent;
+      color: rgba(255,255,255,0.7);
+      border: 1px solid rgba(255,255,255,0.2);
+    }
+
+    .cta-outline:hover {
+      background: rgba(255,255,255,0.07);
+      color: var(--white);
+      border-color: rgba(255,255,255,0.4);
+    }
+
+    /* Device Switcher */
+    .device-switcher {
+      padding: 14px 16px;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      flex-shrink: 0;
+    }
+
+    .device-label {
+      font-size: 0.62rem;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.35);
+      margin-bottom: 8px;
+    }
+
+    .device-btns {
+      display: flex;
+      gap: 6px;
+    }
+
+    .device-btn {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 8px 10px;
+      border-radius: 7px;
+      background: var(--dark-2);
+      border: 1px solid rgba(255,255,255,0.1);
+      color: rgba(255,255,255,0.5);
+      font-size: 0.72rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .device-btn i { font-size: 0.8rem; }
+
+    .device-btn:hover {
+      background: rgba(255,255,255,0.07);
+      color: var(--white);
+    }
+
+    .device-btn.active {
+      background: rgba(192,57,43,0.2);
+      border-color: rgba(192,57,43,0.4);
+      color: var(--white);
+    }
+
+    /* Sections List */
+    .sidebar-sections {
+      padding: 14px 16px;
+      flex: 1;
+    }
+
+    .sections-label {
+      font-size: 0.62rem;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.35);
+      margin-bottom: 8px;
+    }
+
+    .section-chip {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 10px;
+      border-radius: 7px;
+      cursor: pointer;
+      font-size: 0.78rem;
+      color: rgba(255,255,255,0.55);
+      transition: all 0.2s;
+      margin-bottom: 2px;
+    }
+
+    .section-chip i {
+      font-size: 0.72rem;
+      color: var(--red-light);
+      width: 14px;
+      text-align: center;
+    }
+
+    .section-chip:hover {
+      background: rgba(255,255,255,0.05);
+      color: var(--white);
+    }
+
+    /* ===== PREVIEW AREA ===== */
+    .preview-area {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      background: #0d0d0d;
+    }
+
+    /* Preview Toolbar */
+    .preview-toolbar {
+      height: 48px;
+      background: var(--dark-2);
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      display: flex;
+      align-items: center;
+      padding: 0 16px;
+      gap: 12px;
+      flex-shrink: 0;
+    }
+
+    .toolbar-dots {
+      display: flex;
+      gap: 6px;
+    }
+
+    .dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+    }
+
+    .dot-red { background: #ff5f57; }
+    .dot-yellow { background: #febc2e; }
+    .dot-green { background: #28c840; }
+
+    .url-bar {
+      flex: 1;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 6px;
+      padding: 6px 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.75rem;
+      color: rgba(255,255,255,0.5);
+      max-width: 500px;
+    }
+
+    .url-bar i { color: #2ecc71; font-size: 0.7rem; }
+    .url-bar span { color: rgba(255,255,255,0.7); }
+
+    .toolbar-actions {
+      display: flex;
+      gap: 6px;
+      margin-left: auto;
+    }
+
+    .toolbar-btn {
+      width: 32px;
+      height: 32px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: rgba(255,255,255,0.5);
+      font-size: 0.75rem;
+      transition: all 0.2s;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .toolbar-btn:hover {
+      background: rgba(255,255,255,0.12);
+      color: var(--white);
+    }
+
+    /* Preview Frame Container */
+    .preview-frame-container {
+      flex: 1;
+      overflow: hidden;
+      position: relative;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 0;
+      background: #0d0d0d;
+      transition: all 0.4s ease;
+    }
+
+    .preview-frame-container.tablet {
+      padding: 20px;
+      background: #080808;
+    }
+
+    .preview-frame-container.mobile {
+      padding: 20px;
+      background: #080808;
+    }
+
+    /* Desktop frame */
+    .frame-desktop {
+      width: 100%;
+      height: 100%;
+    }
+
+    /* Tablet frame */
+    .frame-tablet {
+      width: 768px;
+      max-width: 100%;
+      height: 100%;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 0 0 2px rgba(255,255,255,0.1), 0 20px 60px rgba(0,0,0,0.8);
+    }
+
+    /* Mobile frame */
+    .frame-mobile-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      height: 100%;
+    }
+
+    .frame-mobile {
+      width: 375px;
+      max-width: 100%;
+      height: calc(100% - 0px);
+      border-radius: 40px;
+      overflow: hidden;
+      box-shadow: 0 0 0 10px #1a1a1a, 0 0 0 12px #2a2a2a, 0 30px 80px rgba(0,0,0,0.9);
+      position: relative;
+    }
+
+    .frame-mobile::before {
+      content: '';
+      position: absolute;
+      top: 12px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80px;
+      height: 6px;
+      background: #2a2a2a;
+      border-radius: 3px;
+      z-index: 10;
+      pointer-events: none;
+    }
+
+    .preview-iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+      display: block;
+    }
+
+    /* Scale for tablet/mobile */
+    .preview-frame-container.tablet .preview-iframe {
+      width: 100%;
+      height: 100%;
+    }
+
+    /* Resize handle */
+    .resize-handle {
+      width: 4px;
+      background: rgba(255,255,255,0.06);
+      cursor: col-resize;
+      transition: background 0.2s;
+      flex-shrink: 0;
+      position: relative;
+    }
+
+    .resize-handle:hover,
+    .resize-handle.dragging {
+      background: var(--red);
+    }
+
+    .resize-handle::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 2px;
+      height: 40px;
+      background: rgba(255,255,255,0.2);
+      border-radius: 1px;
+    }
+
+    /* Overlay when resizing */
+    .resize-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      cursor: col-resize;
+    }
+
+    .resize-overlay.active { display: block; }
+
+    /* Section highlight tooltip */
+    .section-tooltip {
+      position: fixed;
+      background: var(--red);
+      color: var(--white);
+      padding: 4px 10px;
+      border-radius: 4px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      pointer-events: none;
+      z-index: 9998;
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+
+    /* Responsive */
+    @media (max-width: 900px) {
+      :root { --panel-width: 260px; }
+    }
+
+    @media (max-width: 700px) {
+      .sidebar { display: none; }
+      .resize-handle { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="resize-overlay" id="resizeOverlay"></div>
+
+<div class="app" id="app">
+
+  <!-- ===== LEFT SIDEBAR ===== -->
+  <aside class="sidebar" id="sidebar">
+
+    <!-- Header -->
+    <div class="sidebar-header">
+      <div class="brand">
+        <div class="brand-icon"><i class="fas fa-car-crash"></i></div>
+        <div class="brand-text">
+          <span class="brand-name">SALERNO</span>
+          <span class="brand-sub">Auto Body Shop</span>
+        </div>
+      </div>
+      <div class="status-badge">
+        <div class="status-dot"></div>
+        Live Preview
+      </div>
+    </div>
+
+    <!-- Navigation -->
+    <div class="sidebar-nav">
+      <div class="nav-label">Navigate</div>
+      <a class="nav-item active" onclick="scrollTo('home')" href="#">
+        <i class="fas fa-home"></i> Home
+      </a>
+      <a class="nav-item" onclick="scrollTo('about')" href="#">
+        <i class="fas fa-history"></i> About
+      </a>
+      <a class="nav-item" onclick="scrollTo('services')" href="#">
+        <i class="fas fa-wrench"></i> Services
+      </a>
+      <a class="nav-item" onclick="scrollTo('estimate')" href="#">
+        <i class="fas fa-mobile-alt"></i> Get Estimate
+      </a>
+      <a class="nav-item" onclick="scrollTo('reviews')" href="#">
+        <i class="fas fa-star"></i> Reviews
+      </a>
+      <a class="nav-item" onclick="scrollTo('contact')" href="#">
+        <i class="fas fa-envelope"></i> Contact
+      </a>
+    </div>
+
+    <!-- Business Info -->
+    <div class="sidebar-info">
+      <div class="info-card">
+        <div class="info-card-title">Business Info</div>
+        <div class="info-row">
+          <i class="fas fa-map-marker-alt"></i>
+          <span>451 Lorimer St, Brooklyn, NY 11206</span>
+        </div>
+        <div class="info-row">
+          <i class="fas fa-phone"></i>
+          <a href="tel:+18005588093">+1 800-558-8093</a>
+        </div>
+        <div class="info-row">
+          <i class="fas fa-clock"></i>
+          <span>Open 24 Hours</span>
+        </div>
+        <div class="rating-row">
+          <div class="stars">
+            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i>
+          </div>
+          <span class="rating-text">4.5 / 5 &bull; 349 reviews</span>
+        </div>
+      </div>
+      <div class="info-card">
+        <div class="info-card-title">Service Areas</div>
+        <div class="info-row"><i class="fas fa-map"></i><span>Brooklyn &bull; Queens &bull; Manhattan &bull; NYC</span></div>
+      </div>
+    </div>
+
+    <!-- CTA Buttons -->
+    <div class="sidebar-ctas">
+      <a href="tel:+18005588093" class="cta-btn cta-primary">
+        <i class="fas fa-phone"></i> Call +1 800-558-8093
+      </a>
+      <a href="sms:+18005588093" class="cta-btn cta-outline">
+        <i class="fas fa-sms"></i> Text for Estimate
+      </a>
+    </div>
+
+    <!-- Device Switcher -->
+    <div class="device-switcher">
+      <div class="device-label">Preview Device</div>
+      <div class="device-btns">
+        <button class="device-btn active" id="btn-desktop" onclick="setDevice('desktop')">
+          <i class="fas fa-desktop"></i> Desktop
+        </button>
+        <button class="device-btn" id="btn-tablet" onclick="setDevice('tablet')">
+          <i class="fas fa-tablet-alt"></i> Tablet
+        </button>
+        <button class="device-btn" id="btn-mobile" onclick="setDevice('mobile')">
+          <i class="fas fa-mobile-alt"></i> Mobile
+        </button>
+      </div>
+    </div>
+
+    <!-- Sections Quick Jump -->
+    <div class="sidebar-sections">
+      <div class="sections-label">Page Sections</div>
+      <div class="section-chip" onclick="scrollTo('home')"><i class="fas fa-circle"></i> Hero</div>
+      <div class="section-chip" onclick="scrollTo('about')"><i class="fas fa-circle"></i> About / Trust</div>
+      <div class="section-chip" onclick="scrollTo('services')"><i class="fas fa-circle"></i> Services (6)</div>
+      <div class="section-chip" onclick="scrollTo('estimate')"><i class="fas fa-circle"></i> Estimate by Text</div>
+      <div class="section-chip" onclick="scrollTo('reviews')"><i class="fas fa-circle"></i> Reviews &amp; Video</div>
+      <div class="section-chip" onclick="scrollTo('contact')"><i class="fas fa-circle"></i> Contact Form</div>
+      <div class="section-chip" onclick="scrollTo('contact')"><i class="fas fa-circle"></i> Map &amp; Footer</div>
+    </div>
+
+  </aside>
+
+  <!-- ===== RESIZE HANDLE ===== -->
+  <div class="resize-handle" id="resizeHandle"></div>
+
+  <!-- ===== PREVIEW AREA ===== -->
+  <div class="preview-area">
+
+    <!-- Toolbar -->
+    <div class="preview-toolbar">
+      <div class="toolbar-dots">
+        <div class="dot dot-red"></div>
+        <div class="dot dot-yellow"></div>
+        <div class="dot dot-green"></div>
+      </div>
+      <div class="url-bar">
+        <i class="fas fa-lock"></i>
+        <span id="urlText">salerno-autobody-shop.com</span>
+      </div>
+      <div class="toolbar-actions">
+        <button class="toolbar-btn" onclick="reloadFrame()" title="Reload">
+          <i class="fas fa-redo"></i>
+        </button>
+        <button class="toolbar-btn" onclick="openFull()" title="Open Full Screen">
+          <i class="fas fa-external-link-alt"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Frame Container -->
+    <div class="preview-frame-container" id="frameContainer">
+      <iframe
+        id="previewFrame"
+        class="preview-iframe"
+        src="index.html"
+        title="Salerno Auto Body Shop Preview"
+      ></iframe>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  const frame = document.getElementById('previewFrame');
+  const container = document.getElementById('frameContainer');
+  const sidebar = document.getElementById('sidebar');
+  const resizeHandle = document.getElementById('resizeHandle');
+  const resizeOverlay = document.getElementById('resizeOverlay');
+
+  // ===== DEVICE SWITCHER =====
+  function setDevice(device) {
+    document.querySelectorAll('.device-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('btn-' + device).classList.add('active');
+
+    container.className = 'preview-frame-container ' + device;
+
+    if (device === 'desktop') {
+      container.innerHTML = `<iframe id="previewFrame" class="preview-iframe frame-desktop" src="index.html" title="Preview"></iframe>`;
+    } else if (device === 'tablet') {
+      container.innerHTML = `
+        <div class="frame-tablet">
+          <iframe id="previewFrame" class="preview-iframe" src="index.html" title="Preview"></iframe>
+        </div>`;
+    } else if (device === 'mobile') {
+      container.innerHTML = `
+        <div class="frame-mobile-wrap">
+          <div class="frame-mobile">
+            <iframe id="previewFrame" class="preview-iframe" src="index.html" title="Preview"></iframe>
+          </div>
+        </div>`;
+    }
+  }
+
+  // ===== SCROLL TO SECTION =====
+  function scrollTo(sectionId) {
+    const iframe = document.getElementById('previewFrame');
+    if (!iframe) return;
+    try {
+      const target = iframe.contentDocument.getElementById(sectionId);
+      if (target) {
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    } catch(e) {
+      // cross-origin fallback
+      iframe.contentWindow.postMessage({ scrollTo: sectionId }, '*');
+    }
+
+    // Update active nav
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    const sectionMap = { home: 0, about: 1, services: 2, estimate: 3, reviews: 4, contact: 5 };
+    const items = document.querySelectorAll('.nav-item');
+    if (sectionMap[sectionId] !== undefined) {
+      items[sectionMap[sectionId]].classList.add('active');
+    }
+    return false;
+  }
+
+  // ===== RELOAD =====
+  function reloadFrame() {
+    const iframe = document.getElementById('previewFrame');
+    if (iframe) iframe.src = iframe.src;
+  }
+
+  // ===== OPEN FULL =====
+  function openFull() {
+    window.open('index.html', '_blank');
+  }
+
+  // ===== RESIZE HANDLE =====
+  let isResizing = false;
+  let startX = 0;
+  let startWidth = 0;
+
+  resizeHandle.addEventListener('mousedown', (e) => {
+    isResizing = true;
+    startX = e.clientX;
+    startWidth = sidebar.offsetWidth;
+    resizeHandle.classList.add('dragging');
+    resizeOverlay.classList.add('active');
+    document.body.style.userSelect = 'none';
+  });
+
+  document.addEventListener('mousemove', (e) => {
+    if (!isResizing) return;
+    const dx = e.clientX - startX;
+    const newWidth = Math.min(Math.max(startWidth + dx, 200), 500);
+    sidebar.style.width = newWidth + 'px';
+    sidebar.style.minWidth = newWidth + 'px';
+  });
+
+  document.addEventListener('mouseup', () => {
+    if (isResizing) {
+      isResizing = false;
+      resizeHandle.classList.remove('dragging');
+      resizeOverlay.classList.remove('active');
+      document.body.style.userSelect = '';
+    }
+  });
+
+  // ===== ACTIVE NAV ON IFRAME SCROLL =====
+  const sections = ['home', 'services', 'estimate', 'reviews', 'contact'];
+  const navItems = document.querySelectorAll('.nav-item');
+
+  try {
+    document.getElementById('previewFrame').addEventListener('load', () => {
+      const iframeDoc = document.getElementById('previewFrame').contentDocument;
+      if (!iframeDoc) return;
+      iframeDoc.addEventListener('scroll', () => {
+        const scrollY = iframeDoc.documentElement.scrollTop;
+        sections.forEach((id, i) => {
+          const el = iframeDoc.getElementById(id);
+          if (el && el.offsetTop <= scrollY + 200) {
+            navItems.forEach(n => n.classList.remove('active'));
+            if (navItems[i]) navItems[i].classList.add('active');
+          }
+        });
+      });
+    });
+  } catch(e) {}
+</script>
+</body>
+</html>
